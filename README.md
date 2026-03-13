@@ -123,4 +123,4 @@ ClaudeMonitor/
 
 ## License
 
-Adjust to your project (MIT, private, etc.).
+MIT © [Token Monitor contributors](https://github.com/rjcd95/token-bar). See [LICENSE](LICENSE) for details.
