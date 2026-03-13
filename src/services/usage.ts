@@ -42,10 +42,10 @@ export function resolveUsageConfig(appConfig: AppConfig): UsageConfig {
 
 function buildMockSnapshot(config: AppConfig): UsageSnapshot {
   const now = new Date()
-  const base = (now.getHours() / 24) * 0.8 + 0.1
-  const jitter = (Math.sin(now.getTime() / 1_800_000) + 1) / 20
-  const ratio = Math.min(0.99, base + jitter)
-  const totalTokensUsed = Math.round(config.tokenLimit * ratio)
+  // Stable per hour: same value until the next refresh, no continuous change
+  const hourSlot = now.getHours() + now.getDate() * 24
+  const ratio = 0.1 + (hourSlot % 10) / 15
+  const totalTokensUsed = Math.round(config.tokenLimit * Math.min(0.99, ratio))
 
   return {
     timestamp: now.toISOString(),

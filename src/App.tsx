@@ -1,15 +1,33 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { UsagePanel } from './components/UsagePanel'
 import type { AppConfig } from './services/config'
 import { loadConfig } from './services/config'
-import { aggregateHourly, appendToHistory, loadHistory } from './services/history'
-import type { HourlyUsagePoint } from './services/history'
 import { fetchUsage, resolveUsageConfig } from './services/usage'
 import { updateTrayUsage } from './tray'
 
-function nowIsoLocal() {
-  return new Date().toLocaleString()
+/** Formats an ISO timestamp in English: e.g. "Mar 13, 2026, 3:59:40 PM" */
+function formatLastUpdate(iso: string | null): string {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return iso
+  const date = d.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+  const time = d.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  })
+  return `${date}, ${time}`
+}
+
+function capitalizeProvider(name: string): string {
+  if (!name) return '—'
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
 }
 
 function App() {
@@ -20,8 +38,6 @@ function App() {
   const [tokensUsed, setTokensUsed] = useState<number | null>(null)
   const [modelName, setModelName] = useState<string>('claude-3.7-sonnet')
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
-  const [nextRefreshIn, setNextRefreshIn] = useState<string>('—')
-  const [historyPoints, setHistoryPoints] = useState<HourlyUsagePoint[]>([])
 
   useEffect(() => {
     loadConfig()
@@ -40,28 +56,6 @@ function App() {
 
     let cancelled = false
     const usageConfig = resolveUsageConfig(config)
-
-    const updateCountdown = () => {
-      if (!lastUpdated) {
-        setNextRefreshIn('—')
-        return
-      }
-      const last = new Date(lastUpdated).getTime()
-      const next = last + usageConfig.refreshIntervalMinutes * 60 * 1000
-      const now = Date.now()
-      const remainingMs = Math.max(0, next - now)
-      const totalSeconds = Math.round(remainingMs / 1000)
-      const h = Math.floor(totalSeconds / 3600)
-      const m = Math.floor((totalSeconds % 3600) / 60)
-      const s = totalSeconds % 60
-      const label =
-        h > 0
-          ? `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s
-              .toString()
-              .padStart(2, '0')}`
-          : `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-      setNextRefreshIn(label)
-    }
 
     const withinActiveHours = () => {
       const hour = new Date().getHours()
@@ -84,9 +78,6 @@ function App() {
         setModelName(result.snapshot.modelName)
         setLastUpdated(result.snapshot.timestamp)
 
-        const newHistory = await appendToHistory(result.snapshot)
-        setHistoryPoints(aggregateHourly(newHistory))
-
         const pct = (result.snapshot.totalTokensUsed / result.snapshot.tokenLimit) * 100
         void updateTrayUsage(pct)
       } catch (error) {
@@ -101,32 +92,18 @@ function App() {
       }
     }
 
-    const bootstrap = async () => {
-      try {
-        const existingHistory = await loadHistory()
-        if (!cancelled) {
-          setHistoryPoints(aggregateHourly(existingHistory))
-        }
-      } catch {
-        // ignore
-      }
-      await performRefresh()
-    }
-
-    bootstrap()
+    void performRefresh()
 
     const intervalId = window.setInterval(() => {
       void performRefresh()
     }, usageConfig.refreshIntervalMinutes * 60 * 1000)
 
-    const countdownId = window.setInterval(updateCountdown, 1_000)
-
     return () => {
       cancelled = true
       window.clearInterval(intervalId)
-      window.clearInterval(countdownId)
     }
-  }, [config, lastUpdated])
+    // Only when config changes; lastUpdated read via ref to avoid refresh loop
+  }, [config])
 
   const tokenLimit = config?.tokenLimit ?? 1
   const computedTokensUsed = tokensUsed ?? 0
@@ -138,7 +115,7 @@ function App() {
     return (
       <div className="app-root">
         <div className="app-message app-message--error">
-          <h1>Claude Monitor</h1>
+          <h1>Token Monitor</h1>
           <p>Could not load configuration.</p>
           <p className="app-message__details">{configError}</p>
         </div>
@@ -150,7 +127,7 @@ function App() {
     return (
       <div className="app-root">
         <div className="app-message">
-          <h1>Claude Monitor</h1>
+          <h1>Token Monitor</h1>
           <p>Loading configuration&hellip;</p>
         </div>
       </div>
@@ -160,14 +137,13 @@ function App() {
   return (
     <div className="app-root">
       <UsagePanel
+        providerName={capitalizeProvider(config.provider)}
         tokensUsed={computedTokensUsed}
         tokensUsedPercent={tokensUsedPercent}
         tokensRemaining={tokensRemaining}
         tokensRemainingPercent={tokensRemainingPercent}
-        nextRefreshIn={nextRefreshIn}
         modelName={config.showModel ? modelName : 'Hidden'}
-        lastUpdated={lastUpdated ?? nowIsoLocal()}
-        history={historyPoints}
+        lastUpdatedFormatted={formatLastUpdate(lastUpdated)}
         onRefresh={() => {
           setLastUpdated(null)
           setIsRefreshing(true)
@@ -179,8 +155,6 @@ function App() {
               setTokensUsed(result.snapshot.totalTokensUsed)
               setModelName(result.snapshot.modelName)
               setLastUpdated(result.snapshot.timestamp)
-              const newHistory = await appendToHistory(result.snapshot)
-              setHistoryPoints(aggregateHourly(newHistory))
               const pct =
                 (result.snapshot.totalTokensUsed / result.snapshot.tokenLimit) * 100
               void updateTrayUsage(pct)
@@ -195,16 +169,18 @@ function App() {
             }
           })()
         }}
-        onOpenConfig={() => {
-          window.__TAURI__?.shell
-            ?.open('config.json')
-            .catch((error: unknown) => {
-              // eslint-disable-next-line no-console
-              console.error('Failed to open config.json', error)
-            })
+        onOpenConfig={async () => {
+          if (!('__TAURI__' in window)) return
+          const { invoke } = await import('@tauri-apps/api/core')
+          invoke('open_config_file').catch((error: unknown) => {
+            // eslint-disable-next-line no-console
+            console.error('Failed to open config file', error)
+          })
         }}
-        onQuit={() => {
-          window.__TAURI__?.process?.exit(0)
+        onQuit={async () => {
+          if (!('__TAURI__' in window)) return
+          const { exit } = await import('@tauri-apps/plugin-process')
+          await exit(0)
         }}
       />
     </div>

@@ -16,7 +16,10 @@ export function UsageHistoryChart({ data }: Props) {
   if (!data.length) {
     return (
       <div className="usage-chart usage-chart--empty">
-        <span>No history yet</span>
+        <span className="usage-chart__empty-title">Token usage over last 24 hours</span>
+        <span className="usage-chart__empty-text">
+          A line chart will show usage per hour here once you use “Refresh now” or wait for the next automatic refresh.
+        </span>
       </div>
     )
   }

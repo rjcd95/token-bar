@@ -14,28 +14,34 @@ function colorForPercent(percent: number): string {
 export async function initTray(): Promise<void> {
   if (tray) return
 
-  const appWindow = getCurrentWindow()
-  const icon = await defaultWindowIcon()
+  try {
+    const appWindow = getCurrentWindow()
+    const icon = await defaultWindowIcon()
 
-  tray = await TrayIcon.new({
-    icon,
-    title: 'Claude Monitor',
-    tooltip: 'Claude Monitor',
-    menuOnLeftClick: false,
-    action: async (event) => {
-      if (event.type === 'Click') {
-        isVisible = !isVisible
-        if (isVisible) {
-          await appWindow.show()
-          await appWindow.setFocus()
-        } else {
-          await appWindow.hide()
+    tray = await TrayIcon.new({
+      icon,
+      title: 'Claude Monitor',
+      tooltip: 'Claude Monitor',
+      menuOnLeftClick: false,
+      action: async (event) => {
+        if (event.type === 'Click') {
+          isVisible = !isVisible
+          if (isVisible) {
+            await appWindow.show()
+            await appWindow.setFocus()
+          } else {
+            await appWindow.hide()
+          }
         }
-      }
-    },
-  })
+      },
+    })
 
-  await appWindow.hide()
+    // Start hidden and let the tray control visibility.
+    await appWindow.hide()
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to initialize tray', error)
+  }
 }
 
 export async function updateTrayUsage(percent: number): Promise<void> {
