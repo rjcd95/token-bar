@@ -6,6 +6,7 @@ import { loadConfig } from './services/config'
 import { aggregateHourly, appendToHistory, loadHistory } from './services/history'
 import type { HourlyUsagePoint } from './services/history'
 import { fetchUsage, resolveUsageConfig } from './services/usage'
+import { updateTrayUsage } from './tray'
 
 function nowIsoLocal() {
   return new Date().toLocaleString()
@@ -85,6 +86,9 @@ function App() {
 
         const newHistory = await appendToHistory(result.snapshot)
         setHistoryPoints(aggregateHourly(newHistory))
+
+        const pct = (result.snapshot.totalTokensUsed / result.snapshot.tokenLimit) * 100
+        void updateTrayUsage(pct)
       } catch (error) {
         if (cancelled) return
         const message =
@@ -177,6 +181,9 @@ function App() {
               setLastUpdated(result.snapshot.timestamp)
               const newHistory = await appendToHistory(result.snapshot)
               setHistoryPoints(aggregateHourly(newHistory))
+              const pct =
+                (result.snapshot.totalTokensUsed / result.snapshot.tokenLimit) * 100
+              void updateTrayUsage(pct)
             } catch (error) {
               const message =
                 error instanceof Error

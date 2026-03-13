@@ -12,11 +12,13 @@
     "windows": [
       {
         "title": "Claude Monitor",
-        "width": 800,
-        "height": 600,
-        "resizable": true,
+        "width": 420,
+        "height": 320,
+        "resizable": false,
         "fullscreen": false,
-        "center": true
+        "center": true,
+        "visible": false,
+        "decorations": false
       }
     ]
   },
