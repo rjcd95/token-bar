@@ -24,8 +24,7 @@
     "active": true,
     "targets": [
       "dmg"
-    ],
-    "icon": []
+    ]
   },
   "plugins": {}
 }
