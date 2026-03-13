@@ -20,8 +20,8 @@ export async function initTray(): Promise<void> {
 
     tray = await TrayIcon.new({
       icon,
-      title: 'Claude Monitor',
-      tooltip: 'Claude Monitor',
+      title: 'Token Monitor',
+      tooltip: 'Token Monitor',
       menuOnLeftClick: false,
       action: async (event) => {
         if (event.type === 'Click') {

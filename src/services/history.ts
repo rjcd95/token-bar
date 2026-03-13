@@ -2,7 +2,7 @@ import { BaseDirectory } from '@tauri-apps/plugin-fs'
 import { exists, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
 import type { UsageSnapshot } from './usage'
 
-const HISTORY_FILE = 'claude-monitor-history.json'
+const HISTORY_FILE = 'token-bar-history.json'
 const HISTORY_MAX_HOURS = 24
 
 export type UsageHistoryEntry = {

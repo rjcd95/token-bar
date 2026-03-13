@@ -21,7 +21,7 @@ A **macOS menu bar** app that displays token usage for configured providers (e.g
 ```bash
 # Clone and install dependencies
 git clone <repo-url>
-cd ClaudeMonitor
+cd token-bar
 npm install
 
 # Development (menu bar icon + dev window)
@@ -92,7 +92,7 @@ cp config.example.json config.json
 ## Project structure
 
 ```
-ClaudeMonitor/
+token-bar/
 ├── config.example.json   # Config template (no secrets)
 ├── config.json           # Your config (not committed)
 ├── package.json
