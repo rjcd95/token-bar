@@ -1,4 +1,4 @@
-# Logs
+## Logs
 logs
 *.log
 npm-debug.log*
@@ -7,16 +7,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+## Node / frontend
 node_modules
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+## Rust / Tauri
+src-tauri/target
+src-tauri/Cargo.lock
+src-tauri/.fingerprint
+src-tauri/.cargo
+
+## OS / editor
+.DS_Store
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
