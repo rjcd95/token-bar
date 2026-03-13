@@ -1,1 +1,1 @@
-{}
+{"main-fs":{"identifier":"main-fs","description":"File system access for app configuration","local":true,"windows":["main"],"permissions":["fs:default",{"identifier":"fs:scope","allow":[{"path":"$APPCONFIG"},{"path":"$APPCONFIG/*"},{"path":"$APPCONFIG/**/*"}]}]}}
