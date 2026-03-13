@@ -1,6 +1,6 @@
-import { appWindow } from '@tauri-apps/api/window'
 import { TrayIcon } from '@tauri-apps/api/tray'
 import { defaultWindowIcon } from '@tauri-apps/api/app'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 
 let tray: TrayIcon | null = null
 let isVisible = false
@@ -14,6 +14,7 @@ function colorForPercent(percent: number): string {
 export async function initTray(): Promise<void> {
   if (tray) return
 
+  const appWindow = getCurrentWindow()
   const icon = await defaultWindowIcon()
 
   tray = await TrayIcon.new({
