@@ -1,0 +1,14 @@
+/Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/deps/serde-4e50ec7fc906e129.d: /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/build/serde-9f8dd4e62d501035/out/private.rs
+
+/Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/deps/libserde-4e50ec7fc906e129.rlib: /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/build/serde-9f8dd4e62d501035/out/private.rs
+
+/Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/deps/libserde-4e50ec7fc906e129.rmeta: /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/build/serde-9f8dd4e62d501035/out/private.rs
+
+/Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/Rene/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/build/serde-9f8dd4e62d501035/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/Rene/Documents/Projects/ClaudeMonitor/src-tauri/target/debug/build/serde-9f8dd4e62d501035/out

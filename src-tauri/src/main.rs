@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::{ActivationPolicy, Manager};
+use tauri::ActivationPolicy;
 
 fn main() {
     tauri::Builder::default()
@@ -12,17 +12,8 @@ fn main() {
                 app.set_activation_policy(ActivationPolicy::Accessory);
             }
 
-            // Create a basic tray icon. The dynamic icon and menu behavior
-            // will be extended in later steps.
-            #[cfg(target_os = "macos")]
-            {
-                use tauri::tray::TrayIconBuilder;
-
-                TrayIconBuilder::new()
-                    .with_id("claude-monitor-tray")
-                    .with_tooltip("Claude Monitor")
-                    .build(app)?;
-            }
+            // The tray icon will be created from the JavaScript side using the
+            // Tauri tray API, which simplifies cross-platform behavior.
 
             Ok(())
         })
