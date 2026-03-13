@@ -19,6 +19,9 @@ src-tauri/Cargo.lock
 src-tauri/.fingerprint
 src-tauri/.cargo
 
+## Local configuration (not committed)
+config.json
+
 ## OS / editor
 .DS_Store
 .vscode/*

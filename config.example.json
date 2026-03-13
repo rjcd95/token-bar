@@ -1,0 +1,11 @@
+{
+  "provider": "claude",
+  "apiKey": "YOUR_API_KEY",
+  "endpoint": "https://api.anthropic.com",
+  "tokenLimit": 200000,
+  "refreshInterval": 20,
+  "menuBarIcon": "brain",
+  "showPercentages": true,
+  "showModel": true
+}
+

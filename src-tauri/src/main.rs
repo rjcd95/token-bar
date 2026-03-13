@@ -43,6 +43,18 @@ fn config_path(app: &AppHandle) -> Result<PathBuf, String> {
     Ok(dir.join("config.json"))
 }
 
+fn project_config_template() -> Option<AppConfig> {
+    let Ok(cwd) = std::env::current_dir() else {
+        return None;
+    };
+    let candidate = cwd.join("config.json");
+    if !candidate.exists() {
+        return None;
+    }
+    let contents = fs::read_to_string(candidate).ok()?;
+    serde_json::from_str(&contents).ok()
+}
+
 fn ensure_config(app: &AppHandle) -> Result<AppConfig, String> {
     let path = config_path(app)?;
 
@@ -51,15 +63,18 @@ fn ensure_config(app: &AppHandle) -> Result<AppConfig, String> {
             .map_err(|e| format!("Failed to read config file: {e}"))?;
         let parsed: AppConfig =
             serde_json::from_str(&contents).map_err(|e| format!("Invalid config JSON: {e}"))?;
-        Ok(parsed)
-    } else {
-        let default_cfg = AppConfig::default();
-        let contents = serde_json::to_string_pretty(&default_cfg)
-            .map_err(|e| format!("Failed to serialize default config: {e}"))?;
-        fs::write(&path, contents)
-            .map_err(|e| format!("Failed to write default config file: {e}"))?;
-        Ok(default_cfg)
+        return Ok(parsed);
     }
+
+    // If a project-local config.json exists (typically used in development),
+    // use it as the initial configuration source so each developer can keep
+    // their own API keys outside of version control.
+    let cfg = project_config_template().unwrap_or_else(AppConfig::default);
+    let contents = serde_json::to_string_pretty(&cfg)
+        .map_err(|e| format!("Failed to serialize default config: {e}"))?;
+    fs::write(&path, contents)
+        .map_err(|e| format!("Failed to write config file: {e}"))?;
+    Ok(cfg)
 }
 
 #[tauri::command]
