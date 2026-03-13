@@ -1,4 +1,6 @@
 import './UsagePanel.css'
+import type { HourlyUsagePoint } from '../services/history'
+import { UsageHistoryChart } from './UsageHistoryChart'
 
 type UsagePanelProps = {
   tokensUsed: number
@@ -8,6 +10,7 @@ type UsagePanelProps = {
   nextRefreshIn: string
   modelName: string
   lastUpdated: string
+  history: HourlyUsagePoint[]
   onRefresh: () => void
   onOpenConfig: () => void
   onQuit: () => void
@@ -21,6 +24,7 @@ export function UsagePanel({
   nextRefreshIn,
   modelName,
   lastUpdated,
+  history,
   onRefresh,
   onOpenConfig,
   onQuit,
@@ -55,6 +59,10 @@ export function UsagePanel({
           <span className="usage-panel__label">Model</span>
           <span className="usage-panel__value">{modelName}</span>
         </div>
+      </section>
+
+      <section className="usage-panel__chart">
+        <UsageHistoryChart data={history} />
       </section>
 
       <section className="usage-panel__footer">
