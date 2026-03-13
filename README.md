@@ -1,126 +1,126 @@
-# Claude Monitor
+# Token Monitor
 
-Aplicación de **barra de menú de macOS** que muestra el uso de tokens de Claude (Anthropic). Construida con **Tauri 2**, **React**, **TypeScript** y **Vite**.
+A **macOS menu bar** app that displays token usage for configured providers (e.g. Claude / Anthropic). Built with **Tauri 2**, **React**, **TypeScript**, and **Vite**.
 
-- Icono en la barra de menú (sin icono en el Dock).
-- Al hacer clic se abre un panel tipo popover con uso actual, historial y acciones.
-- Los datos se actualizan según la configuración (por defecto cada 1 hora, entre 6:00 y 18:00, más “Actualizar ahora” manual).
-
----
-
-## Requisitos
-
-- **Node.js** 18+ y **npm**
-- **Rust** (para compilar Tauri): [rustup](https://rustup.rs/)
-- **macOS** (la app está pensada para la barra de menú de macOS)
+- Icon in the menu bar (no Dock icon).
+- Clicking the icon opens a popover panel with current usage and actions.
+- Data refreshes according to config (default: every 1 hour between 6:00 and 18:00, plus a manual “Refresh now” button).
 
 ---
 
-## Instalación y ejecución
+## Requirements
+
+- **Node.js** 18+ and **npm**
+- **Rust** (to build Tauri): [rustup](https://rustup.rs/)
+- **macOS** (the app is designed for the macOS menu bar)
+
+---
+
+## Installation and running
 
 ```bash
-# Clonar e instalar dependencias
-git clone <url-del-repo>
+# Clone and install dependencies
+git clone <repo-url>
 cd ClaudeMonitor
 npm install
 
-# Desarrollo (icono en la barra de menú + ventana de desarrollo)
+# Development (menu bar icon + dev window)
 npm run tauri dev
 
-# Build para macOS (.dmg)
+# Build for macOS (.dmg)
 npm run tauri build
 ```
 
-El instalador se genera en `src-tauri/target/release/bundle/dmg/`.
+The installer is generated under `src-tauri/target/release/bundle/dmg/`.
 
 ---
 
-## Configuración
+## Configuration
 
-La app usa un archivo **`config.json`**. Si no existe, se crea uno por defecto la primera vez.
+The app uses a **`config.json`** file. If it does not exist, a default one is created on first run.
 
-### Dónde se busca `config.json`
+### Where `config.json` is looked up
 
-- **Desarrollo** (`npm run tauri dev`): en la **raíz del proyecto** (donde está `package.json`).
-- **App empaquetada**: en el **directorio de trabajo actual** al abrir la app (suele ser tu carpeta de usuario si la abres desde Finder).
+- **Development** (`npm run tauri dev`): in the **project root** (where `package.json` is).
+- **Packaged app**: in the **current working directory** when the app is launched (often your user folder if opened from Finder).
 
-Para desarrollo, conviene tener `config.json` en la raíz del proyecto (y no subirlo al repo).
+For development, keep `config.json` in the project root and do not commit it.
 
-### Plantilla: `config.example.json`
+### Template: `config.example.json`
 
-Copia la plantilla y edita con tus datos:
+Copy the template and edit with your values:
 
 ```bash
 cp config.example.json config.json
-# Edita config.json y añade tu API key de Anthropic
+# Edit config.json and add your Anthropic API key
 ```
 
-### Opciones de `config.json`
+### `config.json` options
 
-| Campo | Descripción | Por defecto |
-|-------|-------------|-------------|
-| `provider` | Proveedor (p. ej. `"claude"`). | `"claude"` |
-| `apiKey` | API key de Anthropic. Sin key válida se usa **datos de prueba (mock)**. | `"YOUR_API_KEY"` |
-| `endpoint` | URL base de la API. | `"https://api.anthropic.com"` |
-| `tokenLimit` | Límite de tokens que se usa para calcular porcentajes. | `200000` |
-| `refreshInterval` | Intervalo de actualización automática en **minutos** (mín. 5). | `20` en ejemplo; en código 60 entre 6:00–18:00 |
-| `menuBarIcon` | Tipo de icono en la barra (p. ej. `"brain"`). | `"brain"` |
-| `showPercentages` | Mostrar porcentajes en el panel. | `true` |
-| `showModel` | Mostrar nombre del modelo. | `true` |
+| Field | Description | Default |
+|-------|-------------|---------|
+| `provider` | Provider name (e.g. `"claude"`). | `"claude"` |
+| `apiKey` | Anthropic API key. Without a valid key, **mock data** is used. | `"YOUR_API_KEY"` |
+| `endpoint` | API base URL. | `"https://api.anthropic.com"` |
+| `tokenLimit` | Token limit used to compute percentages. | `200000` |
+| `refreshInterval` | Auto-refresh interval in **minutes** (min 5). | `20` in example; in code, 60 between 6:00–18:00 |
+| `menuBarIcon` | Menu bar icon type (e.g. `"brain"`). | `"brain"` |
+| `showPercentages` | Show percentages in the panel. | `true` |
+| `showModel` | Show model name. | `true` |
 
-### Cómo obtener la API key de Claude
+### How to get a Claude API key
 
-1. Entra en [Console de Anthropic](https://console.anthropic.com/).
-2. Ve a **API Keys** y crea una clave.
-3. Pégala en `config.json` en el campo `apiKey`.
+1. Go to [Anthropic Console](https://console.anthropic.com/).
+2. Open **API Keys** and create a key.
+3. Paste it in `config.json` in the `apiKey` field.
 
-**Importante:** No subas `config.json` al repositorio (está en `.gitignore`). Usa `config.example.json` como referencia sin datos sensibles.
-
----
-
-## Comportamiento del uso de tokens
-
-- **Actualización automática:** Solo entre **6:00 y 18:00** (hora local). Cada **1 hora** (o el valor de `refreshInterval` si se usa en ese flujo) se hace una petición a la API de uso.
-- **Actualización manual:** Botón **“Actualizar ahora”** en el panel.
-- **Fuente de datos:**  
-  - Si `apiKey` es válida → se usa la **API de uso de Anthropic**.  
-  - Si no hay key o es `"YOUR_API_KEY"` → se usan **datos mock** (estables por hora, no cambian cada segundo).
-- Los **tokens mostrados** solo cambian cuando hay una nueva actualización (automática o manual), no en tiempo real segundo a segundo.
+**Important:** Do not commit `config.json` (it is in `.gitignore`). Use `config.example.json` as a reference without sensitive data.
 
 ---
 
-## Estructura del proyecto
+## Token usage behavior
+
+- **Automatic refresh:** Only between **6:00 and 18:00** (local time). Every **1 hour** (or the `refreshInterval` value when used in that flow) a request is made to the usage API.
+- **Manual refresh:** **“Refresh now”** button in the panel.
+- **Data source:**  
+  - If `apiKey` is valid → the **Anthropic usage API** is used.  
+  - If there is no key or it is `"YOUR_API_KEY"` → **mock data** is used (stable per hour, no per-second changes).
+- **Displayed tokens** only change when a new refresh runs (automatic or manual), not in real time every second.
+
+---
+
+## Project structure
 
 ```
 ClaudeMonitor/
-├── config.example.json   # Plantilla de configuración (sin secretos)
-├── config.json           # Tu configuración (no se commitea)
+├── config.example.json   # Config template (no secrets)
+├── config.json           # Your config (not committed)
 ├── package.json
 ├── src/
-│   ├── App.tsx           # Lógica principal y programación de refrescos
+│   ├── App.tsx           # Main logic and refresh scheduling
 │   ├── components/       # UsagePanel, UsageHistoryChart
 │   ├── services/         # config, usage (API/mock), history
-│   └── tray.ts           # Actualización del título del icono del tray
-└── src-tauri/            # Backend Tauri (Rust)
-    ├── src/main.rs       # Tray, ventana, carga de config
+│   └── tray.ts           # Tray icon title updates
+└── src-tauri/            # Tauri backend (Rust)
+    ├── src/main.rs       # Tray, window, config loading
     ├── tauri.conf.json
-    ├── capabilities/     # Permisos (tray, positioner, fs, shell)
+    ├── capabilities/     # Permissions (tray, positioner, fs, shell)
     └── icons/
 ```
 
 ---
 
-## Scripts útiles
+## Useful scripts
 
-| Comando | Uso |
+| Command | Use |
 |---------|-----|
-| `npm run dev` | Solo frontend (Vite) en el navegador. |
-| `npm run tauri dev` | App completa en modo desarrollo (tray + ventana). |
-| `npm run tauri build` | Build de la app y generación del .dmg. |
-| `npm run lint` | Linter (ESLint). |
+| `npm run dev` | Frontend only (Vite) in the browser. |
+| `npm run tauri dev` | Full app in development mode (tray + window). |
+| `npm run tauri build` | Build the app and generate the .dmg. |
+| `npm run lint` | Run ESLint. |
 
 ---
 
-## Licencia
+## License
 
-Ajusta según tu proyecto (MIT, privado, etc.).
+Adjust to your project (MIT, private, etc.).
